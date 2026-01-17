@@ -13,9 +13,20 @@ export class Buyer {
     if (data.address !== undefined) this.address = data.address;
   }
 
-  getData(): IBuyer {
+  getData(): IBuyer | null {
+    if (!this.payment) return null;
+
     return {
-      payment: this.payment as TPayment,
+      payment: this.payment,
+      email: this.email,
+      phone: this.phone,
+      address: this.address,
+    };
+  }
+
+  getState(): { payment: TPayment | null; email: string; phone: string; address: string } {
+    return {
+      payment: this.payment,
       email: this.email,
       phone: this.phone,
       address: this.address,
@@ -33,9 +44,9 @@ export class Buyer {
     const errors: Partial<Record<keyof IBuyer, string>> = {};
 
     if (!this.payment) errors.payment = 'Не выбран вид оплаты';
-    if (!this.address.trim()) errors.address = 'Необходимо указать адрес';
-    if (!this.email.trim()) errors.email = 'Укажите email';
-    if (!this.phone.trim()) errors.phone = 'Укажите телефон';
+    if (this.address === '') errors.address = 'Необходимо указать адрес';
+    if (this.email === '') errors.email = 'Укажите email';
+    if (this.phone === '') errors.phone = 'Укажите телефон';
 
     return errors;
   }

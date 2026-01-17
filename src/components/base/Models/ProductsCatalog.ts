@@ -24,15 +24,4 @@ export class ProductsCatalog {
     return this.preview;
   }
 
-  clearPreview(): void {
-    this.preview = null;
-  }
-
-  setItems(items: IProduct[]): void {
-    this.setProducts(items);
-  }
-
-  getItems(): IProduct[] {
-    return this.getProducts();
-  }
 }

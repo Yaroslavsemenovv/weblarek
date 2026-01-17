@@ -207,10 +207,6 @@ interface IBuyer {
 - preview: IProduct | null
   Хранит товар, выбранный для подробного отображения.
 
-Конструктор:
-constructor()
-Создаёт пустой каталог товаров.
-
 Методы:
 - setProducts(products: IProduct[]): void
   Сохраняет массив товаров, полученный с сервера.
@@ -236,10 +232,6 @@ constructor()
 Поля класса:
 - items: IProduct[]
   Массив товаров, добавленных в корзину.
-
-Конструктор:
-constructor()
-Создаёт пустую корзину.
 
 Методы:
 - getItems(): IProduct[]
@@ -279,10 +271,6 @@ constructor()
   Телефон покупателя.
 - address: string
   Адрес доставки.
-
-Конструктор:
-constructor()
-Инициализирует данные покупателя пустыми значениями.
 
 Методы:
 - setData(data: Partial<IBuyer>): void
