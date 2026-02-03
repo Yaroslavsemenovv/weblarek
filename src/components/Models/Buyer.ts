@@ -1,53 +1,68 @@
-import type { IBuyer, TPayment } from '../../types';
-
+import {IBuyer, TPayment, IErrors} from '../../types/index.ts'
+import { IEvents } from '../base/Events.ts'
 export class Buyer {
-  private payment: TPayment | null = null;
-  private email = '';
-  private phone = '';
-  private address = '';
+  private payment: TPayment = ''
+  private address: string = ''
+  private phone: string = ''
+  private email: string = ''
+  private events: IEvents
 
-  setData(data: Partial<IBuyer>): void {
-    if (data.payment !== undefined) this.payment = data.payment;
-    if (data.email !== undefined) this.email = data.email;
-    if (data.phone !== undefined) this.phone = data.phone;
-    if (data.address !== undefined) this.address = data.address;
+  constructor(events: IEvents){
+    this.events = events
   }
 
-  getData(): IBuyer | null {
-    if (!this.payment) return null;
+  setPayment(payment: TPayment): void {
+    this.payment = payment;
+    this.events.emit('buyer:changed', { field: 'payment' })
+  }
 
+  setAddress(address: string): void {
+    this.address = address;
+    this.events.emit('buyer:changed', { field: 'address' })
+  }
+
+  setEmail(email: string): void {
+    this.email = email;
+    this.events.emit('buyer:changed', { field: 'email' })
+  }
+
+  setPhone(phone: string): void {
+    this.phone = phone;
+    this.events.emit('buyer:changed', { field: 'phone' })
+  }
+
+  getData(): IBuyer {
     return {
       payment: this.payment,
-      email: this.email,
-      phone: this.phone,
       address: this.address,
-    };
-  }
-
-  getState(): { payment: TPayment | null; email: string; phone: string; address: string } {
-    return {
-      payment: this.payment,
-      email: this.email,
       phone: this.phone,
-      address: this.address,
-    };
+      email: this.email
+    }
   }
 
-  clear(): void {
-    this.payment = null;
-    this.email = '';
-    this.phone = '';
-    this.address = '';
+  clearData(): void {
+  this.payment = ''
+  this.address = ''
+  this.phone = ''
+  this.email = ''
+  this.events.emit('buyer:changed')
   }
 
-  validate(): Partial<Record<keyof IBuyer, string>> {
-    const errors: Partial<Record<keyof IBuyer, string>> = {};
-
-    if (!this.payment) errors.payment = 'Не выбран вид оплаты';
-    if (this.address === '') errors.address = 'Необходимо указать адрес';
-    if (this.email === '') errors.email = 'Укажите email';
-    if (this.phone === '') errors.phone = 'Укажите телефон';
-
-    return errors;
+  validation(): IErrors {
+    const errors: IErrors = {};
+    
+    if (!this.payment) {
+      errors.payment = 'Выберите способ оплаты'
+    }
+    if (!this.address.trim()) {
+      errors.address = 'Введите адрес'
+    }
+    if (!this.phone.trim()) {
+      errors.phone = 'ВВедите телефон'
+    }
+    if (!this.email.trim()) {
+      errors.email = 'Введите email'
+    }
+    return errors
   }
 }

@@ -1,14 +1,10 @@
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface IApi {
-  get<T extends object>(uri: string): Promise<T>;
-  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+    get<T extends object>(uri: string): Promise<T>;
+    post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
-/** Способ оплаты */
-export type TPayment = 'online' | 'cash';
-
-/** Товар */
 export interface IProduct {
   id: string;
   description: string;
@@ -18,7 +14,6 @@ export interface IProduct {
   price: number | null;
 }
 
-/** Покупатель */
 export interface IBuyer {
   payment: TPayment;
   email: string;
@@ -26,20 +21,24 @@ export interface IBuyer {
   address: string;
 }
 
-/** Ответ сервера на GET /product/ */
-export interface IProductsResponse {
-  total: number;
-  items: IProduct[];
-}
+export type TPayment = 'card' | 'cash' | ''
 
-/** Тело запроса на POST /order/ */
-export type IOrderRequest = IBuyer & {
+export type IErrors = Partial<Record<keyof IBuyer, string>>
+
+
+export interface IOrderRequest extends IBuyer {
   total: number;
   items: string[];
-};
+}
 
-/** Ответ сервера на POST /order/ */
 export interface IOrderResponse {
   id: string;
   total: number;
+}
+
+export interface IValidationErrors {
+  payment?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
 }
