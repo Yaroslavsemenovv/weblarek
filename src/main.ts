@@ -123,13 +123,11 @@ events.on('cart:change', () => {
 
 // оформление заказа
 events.on('basket:order', () => {
+  const errors = buyer.validation()
   const data = buyer.getData()
 
-  const hasPayment = Boolean(data.payment)
-  const hasAddress = Boolean(data.address.trim())
-
-  orderForm.setErrors('')
-  orderForm.setSubmitEnabled(hasPayment && hasAddress)
+  orderForm.setErrors([errors.payment, errors.address].filter(Boolean).join('. '))
+  orderForm.setSubmitEnabled(!errors.payment && !errors.address)
   orderForm.togglePaymentButtonStatus(data.payment)
   orderForm.setAddress(data.address)
 
@@ -145,13 +143,11 @@ events.on('address:change', (data: { address: string }) => {
 })
 
 events.on('order:submit', () => {
+  const errors = buyer.validation()
   const data = buyer.getData()
 
-  const hasEmail = Boolean(data.email.trim())
-  const hasPhone = Boolean(data.phone.trim())
-
-  contactsForm.setErrors('')
-  contactsForm.setSubmitEnabled(hasEmail && hasPhone)
+  contactsForm.setErrors([errors.email, errors.phone].filter(Boolean).join('. '))
+  contactsForm.setSubmitEnabled(!errors.email && !errors.phone)
   contactsForm.setEmail(data.email)
   contactsForm.setPhone(data.phone)
 
@@ -177,6 +173,7 @@ events.on('buyer:changed', () => {
 
   contactsForm.setErrors([errors.email, errors.phone].filter(Boolean).join('. '))
   contactsForm.setSubmitEnabled(!errors.email && !errors.phone)
+  contactsForm.setEmail(data.email)
   contactsForm.setPhone(data.phone)
 })
 

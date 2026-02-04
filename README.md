@@ -1,5 +1,3 @@
-}
-
 Назначение:
 Интерфейс описывает данные покупателя, необходимые для оформления заказа.
 
@@ -9,12 +7,14 @@
 - phone — телефон покупателя
 - address — адрес доставки
 
+
 МОДЕЛИ ДАННЫХ
 
 В приложении используются три модели данных, разделённые по зонам ответственности:
 - каталог товаров;
 - корзина;
 - данные покупателя.
+
 
 КАТАЛОГ ТОВАРОВ
 
@@ -43,6 +43,7 @@
 
 - getPreview(): IProduct | null
   Возвращает товар, выбранный для подробного отображения.
+
 
 КОРЗИНА
 
@@ -141,102 +142,235 @@ HTTP-запросов.
     для выполнения HTTP-запросов (get и post).
 
 Методы класса:
-
 - getProducts(): Promise<IProduct[]>
-  Метод выполняет GET-запрос к эндпоинту /product/.
-  В результате запроса сервер возвращает объект, содержащий массив товаров.
-  Метод возвращает массив товаров для дальнейшего сохранения в модель каталога.
-
 - postOrder(order: IOrderRequest): Promise<IOrderResponse>
-  Метод выполняет POST-запрос к эндпоинту /order/.
-  В параметре метода передаётся объект заказа, включающий данные покупателя,
-  массив идентификаторов выбранных товаров и итоговую стоимость заказа.
-  Метод возвращает объект с результатом оформления заказа, полученный от сервера.
 
 
-  ##### Анализ макета
- - Сайт всего с одной страничкой, всего 5 модальных окон.
- - Модальное окно с описанием товара.
- - Модальное окно с корзиной/покупками.
- - Два модальных окна с разными формами.
- - Модальное окно с подтверждением покупки.
+ПРЕДСТАВЛЕНИЯ
 
-- Модальные окна
-  Карточка товаров.
-  Корзина.
-  Форма - вид оплаты.
-  Форма - емейл, телефон.
-  Подтверждение оплаты.
-  Модальное окно
+В приложении используются классы представления, отвечающие за отображение интерфейса
+и работу с DOM. Классы представления не содержат бизнес-логики и не хранят данные.
 
+GALLERY
 
-- Основная страничка
-  На самой страничке расположен каталог карточек товара.
-  Карточка товара в каталоге.
-  Карточка товара в корзине.
+Назначение и зона ответственности:
+Класс отвечает за отображение каталога товаров.
 
-- Шапка
-  В шапке есть корзина с счетчиком товаров в ней.
- 
-- Переиспользуемые сущности
-  Карточка товара, форма заполнения.
-  
+Поля класса:
+- container: HTMLElement
+  DOM-контейнер галереи.
 
-  ###### Анализ верстки
+Методы:
+- render(data: { catalog: HTMLElement[] }): void
+  Отображает карточки товаров в галерее.
 
-  - класс header отвечает за отображение шапки
-    <span class="header__basket-counter">0</span> - HTMLElement
-    <button class="header__basket"> - HTMLButtonElement
-    set counter(value:number)
-    Данные которые будут передаваться:
-    HeaderData
-    counter:number
-
-  - класс main отвечает за отображение каталога карточек
-    CatalogElement:HTMLElement
-    set catalog(items:HTMLElement[])
-    Данные которые будут передаваться:
-    GalleryData
-    Catalog:HTMLElement[]
-
-  - класс modal отвечает за отображение модальных окон  
-   modal — контейнер модального окна (оверлей)  
-   modal__container — контейнер содержимого  
-   modal__close — кнопка закрытия  
-   modal__content — контейнер для подстановки шаблонов  
-
-  Используется для отображения всех модальных окон приложения.
-
-- модальное окно карточки товара  
-  template `#card-preview`  
-  Отображает подробную информацию о товаре и кнопки добавления/удаления из корзины.
-
-- модальное окно корзины  
-  template `#basket`  
-  template `#card-basket` — элемент товара в корзине  
-  Отображает список товаров, итоговую стоимость и кнопку перехода к оформлению заказа.
-
-- модальное окно оформления заказа  
-  template `#order`  
-  Используется для выбора способа оплаты и ввода адреса доставки.
-
-- модальное окно контактных данных  
-  template `#contacts`  
-  Используется для ввода email и телефона покупателя.
-
-- модальное окно подтверждения заказа  
-  template `#success`  
-  Отображается после успешного оформления заказа и содержит информацию о результате покупки.
+Конструктор:
+- constructor(container: HTMLElement)
 
 
-  Презентер
-   - Презентер связывает слои приложения, управляет состоянием и реагирует на события.
+HEADER
 
-   - Запуск Презентера.
-    Презентер получает данные от модели и передает их в представления. Он слушает события, поступающие от моделей, и вызывает соответствующие обновления в UI.
+Назначение и зона ответственности:
+Класс отвечает за отображение шапки сайта и счётчика корзины.
 
-   - Обработчики событий
-    Все обработчики событий находятся в презентере и направляют команды представлениям.
+Поля класса:
+- counterElement: HTMLElement
+- basketButtonElement: HTMLButtonElement
+- events: IEvents
 
-   - Вывод на экран
-     Презентер следит за состоянием модели, представления отвечают за визуальное отображение данных.
+Методы:
+- set counter(value: number): void
+
+Конструктор:
+- constructor(events: IEvents, container: HTMLElement)
+
+
+MODAL
+
+Назначение и зона ответственности:
+Класс отвечает за отображение модальных окон приложения.
+
+Поля класса:
+- container: HTMLElement
+- contentElement: HTMLElement
+- closeButtonElement: HTMLButtonElement
+- events: IEvents
+
+Методы:
+- open(content: HTMLElement): void
+- close(): void
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+BASKET
+
+Назначение и зона ответственности:
+Класс отвечает за отображение корзины пользователя.
+
+Поля класса:
+- container: HTMLElement
+- itemsContainer: HTMLElement
+- totalElement: HTMLElement
+- orderButtonElement: HTMLButtonElement
+- events: IEvents
+
+Методы:
+- render(data: { items: HTMLElement[]; total: number }): HTMLElement
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+CARD
+
+Назначение и зона ответственности:
+Базовый класс карточки товара.
+
+Поля класса:
+- container: HTMLElement
+- title: HTMLElement
+- price: HTMLElement
+- events: IEvents
+
+Методы:
+- renderBase(product: IProduct): void
+- render(product: IProduct): HTMLElement
+
+Конструктор:
+- constructor(events: IEvents, template: string)
+
+
+CARD CATALOG
+
+Назначение и зона ответственности:
+Карточка товара в каталоге.
+
+Поля класса:
+- category: HTMLElement
+- image: HTMLImageElement
+
+Методы:
+- render(product: IProduct): HTMLElement
+
+Конструктор:
+- constructor(events: IEvents, onClick: () => void)
+
+
+CARD PREVIEW
+
+Назначение и зона ответственности:
+Карточка предпросмотра товара.
+
+Поля класса:
+- description: HTMLElement
+- actionButtonElement: HTMLButtonElement
+- image: HTMLImageElement
+- category: HTMLElement
+
+Методы:
+- render(product: IProduct): HTMLElement
+- setButtonText(text: string): void
+- setButtonDisabled(disabled: boolean): void
+
+Конструктор:
+- constructor(events: IEvents, onButtonClick: () => void)
+
+
+CARD BASKET
+
+Назначение и зона ответственности:
+Карточка товара в корзине.
+
+Поля класса:
+- indexElement: HTMLElement
+- removeButtonElement: HTMLButtonElement
+
+Методы:
+- render(product: IProduct & { index?: number }): HTMLElement
+
+Конструктор:
+- constructor(events: IEvents, onRemoveClick: () => void)
+
+
+FORM
+
+Назначение и зона ответственности:
+Базовый класс формы.
+
+Поля класса:
+- container: HTMLElement
+- submitButtonElement: HTMLButtonElement
+- errorsElement: HTMLElement
+- events: IEvents
+
+Методы:
+- setErrors(message: string): void
+- setSubmitEnabled(enabled: boolean): void
+- onSubmit(): void
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+ORDER FORM
+
+Назначение и зона ответственности:
+Форма оформления заказа.
+
+Поля класса:
+- addressInputElement: HTMLInputElement
+- paymentButtons: HTMLButtonElement[]
+
+Методы:
+- setAddress(value: string): void
+- togglePaymentButtonStatus(value: TPayment): void
+- onSubmit(): void
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+PAYMENT FORM
+
+Назначение и зона ответственности:
+Форма ввода контактных данных.
+
+Поля класса:
+- emailInputElement: HTMLInputElement
+- phoneInputElement: HTMLInputElement
+
+Методы:
+- setEmail(value: string): void
+- setPhone(value: string): void
+- onSubmit(): void
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+SUCCESS
+
+Назначение и зона ответственности:
+Экран успешного оформления заказа.
+
+Поля класса:
+- totalElement: HTMLElement
+- closeButtonElement: HTMLButtonElement
+- events: IEvents
+
+Методы:
+- set total(value: number): void
+
+Конструктор:
+- constructor(container: HTMLElement, events: IEvents)
+
+
+ПРЕЗЕНТЕР
+
+Презентер связывает модели и представления приложения,
+управляет состоянием и реагирует на события.
+
+Все обработчики событий находятся в презентере (main.ts).
+Презентер получает данные от моделей и передаёт их в представления.
